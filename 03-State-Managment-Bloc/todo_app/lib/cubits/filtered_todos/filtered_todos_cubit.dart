@@ -1,12 +1,14 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+// ignore_for_file: no_leading_underscores_for_local_identifiers
+
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
-import 'package:todo_app/cubits/todo_filter/todo_filter_cubit.dart';
-import 'package:todo_app/cubits/todo_list/todo_list_cubit.dart';
-import 'package:todo_app/cubits/todo_search/todo_search_cubit.dart';
-import 'package:todo_app/models/todo_model.dart';
+
+import '../../models/todo_model.dart';
+import '../todo_filter/todo_filter_cubit.dart';
+import '../todo_list/todo_list_cubit.dart';
+import '../todo_search/todo_search_cubit.dart';
 
 part 'filtered_todos_state.dart';
 
@@ -15,18 +17,15 @@ class FilteredTodosCubit extends Cubit<FilteredTodosState> {
   late StreamSubscription todoSearchSubscription;
   late StreamSubscription todoListSubscription;
 
-  final List<Todo> initialTodos;
-
   final TodoFilterCubit todoFilterCubit;
   final TodoSearchCubit todoSearchCubit;
   final TodoListCubit todoListCubit;
 
   FilteredTodosCubit({
-    required this.initialTodos,
     required this.todoFilterCubit,
     required this.todoSearchCubit,
     required this.todoListCubit,
-  }) : super(FilteredTodosState(filteredTodos: initialTodos)) {
+  }) : super(FilteredTodosState.initial()) {
     todoFilterSubscription = todoFilterCubit.stream.listen((TodoFilterState todoFilterState) {
       setFilteredTodos();
     });
