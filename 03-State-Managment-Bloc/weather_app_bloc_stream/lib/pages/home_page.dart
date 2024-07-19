@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:recase/recase.dart';
-import 'package:weather_app_cubit_stream/constants/constants.dart';
-import 'package:weather_app_cubit_stream/cubits/temp_settings/temp_settings_cubit.dart';
-import 'package:weather_app_cubit_stream/cubits/weather/weather_cubit.dart';
-import 'package:weather_app_cubit_stream/pages/search_page.dart';
-import 'package:weather_app_cubit_stream/pages/settings_page.dart';
+import 'package:weather_app_cubit_stream/blocs/temp_settings/temp_settings_bloc.dart';
+import 'package:weather_app_cubit_stream/blocs/weather/weather_bloc.dart';
+
+import '../constants/constants.dart';
+import 'search_page.dart';
+import 'settings_page.dart';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+
+enum TempUnit {
+  celsius,
+  fahrenheit,
+}
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -15,17 +24,19 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String? _city;
+
   @override
   Widget build(BuildContext context) {
-    String? _city;
-
     return Scaffold(
       appBar: AppBar(
         title: const Text('Weather'),
         actions: [
           IconButton(
             onPressed: () async {
-              final weatherCubit = context.read<WeatherCubit>();
+              // to avoid async gap warning
+              final weatherBloc = context.read<WeatherBloc>();
+
               _city = await Navigator.push(
                 context,
                 MaterialPageRoute(builder: (context) {
@@ -34,7 +45,7 @@ class _HomePageState extends State<HomePage> {
               );
               print('city: $_city');
               if (_city != null) {
-                weatherCubit.fetchWeather(_city!);
+                weatherBloc.add(FetchWeatherEvent(city: _city!));
               }
             },
             icon: const Icon(Icons.search),
@@ -57,7 +68,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   String showTemperature(double temperature) {
-    final tempUnit = context.watch<TempSettingsCubit>().state.tempUnit;
+    final tempUnit = context.watch<TempSettingsBloc>().state.tempUnit;
 
     if (tempUnit == TempUnit.fahrenheit) {
       // to avoid prefer_interpolation_to_compose_strings warning
@@ -86,8 +97,13 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  _showWeather() {
-    return BlocConsumer<WeatherCubit, WeatherState>(
+  Widget _showWeather() {
+    return BlocConsumer<WeatherBloc, WeatherState>(
+      listener: (context, state) {
+        if (state.status == WeatherStatus.error) {
+          errorDialog(context, state.error.errMsg);
+        }
+      },
       builder: (context, state) {
         if (state.status == WeatherStatus.initial) {
           return const Center(
@@ -185,17 +201,43 @@ class _HomePageState extends State<HomePage> {
           ],
         );
       },
-      listener: (context, state) {
-        if (state.status == WeatherStatus.error) {
-          showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: Text(state.error.errMsg),
-              );
-            },
-          );
-        }
+    );
+  }
+}
+
+void errorDialog(BuildContext context, String errorMessage) {
+  if (!Platform.isIOS) {
+    showCupertinoDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return CupertinoAlertDialog(
+          title: const Text('Error'),
+          content: Text(errorMessage),
+          actions: [
+            CupertinoDialogAction(
+              child: const Text('OK'),
+              onPressed: () => Navigator.pop(context),
+            ),
+          ],
+        );
+      },
+    );
+  } else {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(errorMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        );
       },
     );
   }

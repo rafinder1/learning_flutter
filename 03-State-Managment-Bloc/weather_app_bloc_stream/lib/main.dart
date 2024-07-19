@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'package:weather_app_cubit_stream/cubits/temp_settings/temp_settings_cubit.dart';
-import 'package:weather_app_cubit_stream/cubits/theme/theme_cubit.dart';
-import 'package:weather_app_cubit_stream/cubits/weather/weather_cubit.dart';
-import 'package:weather_app_cubit_stream/repositories/weather_repository.dart';
-import 'package:weather_app_cubit_stream/services/weather_api_services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:http/http.dart' as http;
+import 'package:weather_app_cubit_stream/blocs/temp_settings/temp_settings_bloc.dart';
+import 'package:weather_app_cubit_stream/blocs/theme/theme_bloc.dart';
+import 'package:weather_app_cubit_stream/blocs/weather/weather_bloc.dart';
+
+import 'repositories/weather_repository.dart';
+import 'services/weather_api_services.dart';
 import 'pages/home_page.dart';
 
 void main() async {
@@ -27,21 +28,21 @@ class MyApp extends StatelessWidget {
       ),
       child: MultiBlocProvider(
         providers: [
-          BlocProvider<WeatherCubit>(
-            create: (context) => WeatherCubit(
+          BlocProvider<WeatherBloc>(
+            create: (context) => WeatherBloc(
               weatherRepository: context.read<WeatherRepository>(),
             ),
           ),
-          BlocProvider<TempSettingsCubit>(
-            create: (context) => TempSettingsCubit(),
+          BlocProvider<TempSettingsBloc>(
+            create: (context) => TempSettingsBloc(),
           ),
-          BlocProvider<ThemeCubit>(
-            create: (context) => ThemeCubit(
-              weatherCubit: context.read<WeatherCubit>(),
+          BlocProvider<ThemeBloc>(
+            create: (context) => ThemeBloc(
+              weatherBloc: context.read<WeatherBloc>(),
             ),
           ),
         ],
-        child: BlocBuilder<ThemeCubit, ThemeState>(
+        child: BlocBuilder<ThemeBloc, ThemeState>(
           builder: (context, state) {
             return MaterialApp(
               title: 'Weather App',
