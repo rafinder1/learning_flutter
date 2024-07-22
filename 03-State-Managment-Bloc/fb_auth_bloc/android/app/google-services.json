@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "217207124016",
+    "project_id": "course-udemy-bloc",
+    "storage_bucket": "course-udemy-bloc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:217207124016:android:9273ab97dea65bb5443df5",
+        "android_client_info": {
+          "package_name": "auth.bloc.course"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMHGMy6zP0GKL7qCO-ODw4AtJ9NdsKx2I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
