@@ -10,6 +10,11 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  final formKey = GlobalKey<FormState>();
+
+  String email = '';
+  String password = '';
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,6 +22,7 @@ class LoginScreenState extends State<LoginScreen> {
         20.0,
       ),
       child: Form(
+        key: formKey,
         child: Column(
           children: [
             emailField(),
@@ -39,6 +45,18 @@ class LoginScreenState extends State<LoginScreen> {
         labelText: 'Email',
         icon: Icon(Icons.email_rounded),
       ),
+      validator: (value) {
+        if (value?.isEmpty ?? true) {
+          return 'Password cannot be empty';
+        }
+        if (!value!.contains('@')) {
+          return 'Please enter a valid email!';
+        }
+        return null;
+      },
+      onSaved: (newValue) {
+        email = newValue!;
+      },
     );
   }
 
@@ -49,6 +67,18 @@ class LoginScreenState extends State<LoginScreen> {
         labelText: 'Password',
         icon: Icon(Icons.password_outlined),
       ),
+      validator: (String? value) {
+        if (value?.isEmpty ?? true) {
+          return 'Password cannot be empty';
+        }
+        if (value!.length < 4) {
+          return 'Password must be at least 4 characters';
+        }
+        return null;
+      },
+      onSaved: (newValue) {
+        password = newValue!;
+      },
     );
   }
 
@@ -58,7 +88,11 @@ class LoginScreenState extends State<LoginScreen> {
         shadowColor: WidgetStatePropertyAll<Color>(Colors.green),
         backgroundColor: WidgetStatePropertyAll<Color>(Colors.white70),
       ),
-      onPressed: () {},
+      onPressed: () {
+        if (formKey.currentState!.validate()) {
+          formKey.currentState?.save();
+        }
+      },
       child: const Text('Submit'),
     );
   }
