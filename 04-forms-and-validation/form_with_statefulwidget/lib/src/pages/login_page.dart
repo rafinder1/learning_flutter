@@ -10,6 +10,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class LoginScreenState extends State<LoginScreen> {
+  final formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -17,6 +18,7 @@ class LoginScreenState extends State<LoginScreen> {
         20.0,
       ),
       child: Form(
+        key: formKey,
         child: Column(
           children: [
             emailField(),
@@ -58,7 +60,9 @@ class LoginScreenState extends State<LoginScreen> {
         shadowColor: WidgetStatePropertyAll<Color>(Colors.green),
         backgroundColor: WidgetStatePropertyAll<Color>(Colors.white70),
       ),
-      onPressed: () {},
+      onPressed: () {
+        formKey.currentState?.reset();
+      },
       child: const Text('Submit'),
     );
   }
