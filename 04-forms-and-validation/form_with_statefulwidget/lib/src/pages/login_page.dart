@@ -11,6 +11,10 @@ class LoginScreen extends StatefulWidget {
 
 class LoginScreenState extends State<LoginScreen> {
   final formKey = GlobalKey<FormState>();
+
+  String email = '';
+  String password = '';
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -50,6 +54,9 @@ class LoginScreenState extends State<LoginScreen> {
         }
         return null;
       },
+      onSaved: (newValue) {
+        email = newValue!;
+      },
     );
   }
 
@@ -69,6 +76,9 @@ class LoginScreenState extends State<LoginScreen> {
         }
         return null;
       },
+      onSaved: (newValue) {
+        password = newValue!;
+      },
     );
   }
 
@@ -79,7 +89,9 @@ class LoginScreenState extends State<LoginScreen> {
         backgroundColor: WidgetStatePropertyAll<Color>(Colors.white70),
       ),
       onPressed: () {
-        formKey.currentState?.validate();
+        if (formKey.currentState!.validate()) {
+          formKey.currentState?.save();
+        }
       },
       child: const Text('Submit'),
     );
