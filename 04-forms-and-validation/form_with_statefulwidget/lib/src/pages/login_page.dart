@@ -41,6 +41,15 @@ class LoginScreenState extends State<LoginScreen> {
         labelText: 'Email',
         icon: Icon(Icons.email_rounded),
       ),
+      validator: (value) {
+        if (value?.isEmpty ?? true) {
+          return 'Password cannot be empty';
+        }
+        if (!value!.contains('@')) {
+          return 'Please enter a valid email!';
+        }
+        return null;
+      },
     );
   }
 
@@ -51,6 +60,15 @@ class LoginScreenState extends State<LoginScreen> {
         labelText: 'Password',
         icon: Icon(Icons.password_outlined),
       ),
+      validator: (String? value) {
+        if (value?.isEmpty ?? true) {
+          return 'Password cannot be empty';
+        }
+        if (value!.length < 4) {
+          return 'Password must be at least 4 characters';
+        }
+        return null;
+      },
     );
   }
 
@@ -61,7 +79,7 @@ class LoginScreenState extends State<LoginScreen> {
         backgroundColor: WidgetStatePropertyAll<Color>(Colors.white70),
       ),
       onPressed: () {
-        formKey.currentState?.reset();
+        formKey.currentState?.validate();
       },
       child: const Text('Submit'),
     );
