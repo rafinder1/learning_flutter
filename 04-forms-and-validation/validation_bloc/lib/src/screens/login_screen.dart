@@ -18,7 +18,7 @@ class LoginScreen extends StatelessWidget {
           SizedBox(
             height: 25,
           ),
-          submitButton(),
+          submitButton(bloc),
         ],
       ),
     );
@@ -58,10 +58,15 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  submitButton() {
-    return ElevatedButton(
-      onPressed: () {},
-      child: Text('Login'),
+  submitButton(Bloc bloc) {
+    return StreamBuilder(
+      stream: bloc.submitValid,
+      builder: (context, snapshot) {
+        return ElevatedButton(
+          onPressed: snapshot.hasData ? bloc.submit : null,
+          child: const Text('Login'),
+        );
+      },
     );
   }
 }
