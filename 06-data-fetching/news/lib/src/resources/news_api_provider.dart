@@ -1,17 +1,16 @@
 import 'dart:convert';
-import 'dart:io';
 import 'package:news/src/models/item_model.dart';
 
 import 'package:http/http.dart' as http;
 
-final _root = 'https://hacker-news.firebaseio.com/v0';
+final _root = 'hacker-news.firebaseio.com';
 
 class NewsApiProvider {
-  HttpClient httpClient = HttpClient();
-  fetchTopIds() async {
-    var url = Uri.https('$_root/topstories.json');
+  http.Client client = http.Client();
 
-    var response = await http.get(url);
+  fetchTopIds() async {
+    var url = Uri.https(_root, '/v0/topstories.json');
+    var response = await client.get(url);
 
     final ids = json.decode(response.body);
 
@@ -19,9 +18,8 @@ class NewsApiProvider {
   }
 
   fetchItem(int id) async {
-    var url = Uri.https('$_root/item/$id.json');
-
-    var response = await http.get(url);
+    var url = Uri.https(_root, '/v0/item/$id.json');
+    var response = await client.get(url);
 
     final parsedJson = json.decode(response.body);
 
